@@ -15,6 +15,7 @@ CREATE OR REPLACE SCHEMA raw;
 CREATE OR REPLACE SCHEMA harmonized;
 CREATE OR REPLACE SCHEMA analytics;
 CREATE OR REPLACE SCHEMA public;  -- for shared utilities like file formats and stages
+CREATE OR REPLACE SCHEMA automation;
 
 /*-----------------------------------------------------
 -- Step 2: AWS Integration and Stage Creation
@@ -30,6 +31,7 @@ CREATE OR REPLACE STORAGE INTEGRATION S3_role_integration
 
 -- View the integration
 SHOW INTEGRATIONS;
+
 DESCRIBE INTEGRATION S3_role_integration;
 
 -- Create CSV file format under the public schema
@@ -39,6 +41,7 @@ CREATE OR REPLACE FILE FORMAT public.csv_ff
   FIELD_OPTIONALLY_ENCLOSED_BY = '"'
   TRIM_SPACE = TRUE
   NULL_IF = ('NULL'); 
+
 
 -- Create stage using the integration and file format
 CREATE OR REPLACE STAGE public.s3load_stage
@@ -52,10 +55,10 @@ SHOW STAGES;
 -- Preview the contents of a folder in the stage 
 LIST @public.s3load_stage/raw/categories;
 
-LIST @public.s3load_stage/raw/orders;
+LIST @public.s3load_stage/raw/suppliers;
 
 -- Preview the data of a file stored in the stage
-SELECT $1, $2, $3 FROM @public.s3load_stage/raw/shippers;
+SELECT $1, $2, $3 FROM @public.s3load_stage/raw/regions;
 
 /*-----------------------------------------------------
 -- Step 3: Create Tables in raw schema
@@ -188,4 +191,73 @@ CREATE OR REPLACE TABLE regions (
 COPY INTO northwind.raw.categories
 FROM @public.s3load_stage/raw/categories;
 
+SELECT * FROM northwind.raw.categories;
+
 -- Use COPY INTO to load data into customers, employee_territories, employees, order_details, orders, products, regions, and shippers.
+
+/*-----------------------------------------------------
+-- Step 5: PIPE demonstration 
+-----------------------------------------------------*/
+
+/*-----------------------------------------------------
+AUTO-INGEST - Not available for free accounts
+
+CREATE OR REPLACE NOTIFICATION INTEGRATION s3_notify_int
+  TYPE = QUEUE
+  ENABLED = TRUE
+  NOTIFICATION_PROVIDER = AWS_SQS
+  AWS_SQS_ARN = 'arn:aws:sqs:us-east-2:457151801201:snowflake-s3-queue'
+  AWS_SQS_ROLE_ARN = 'arn:aws:iam::457151801201:role/snowflake_role'
+  DIRECTION = 'INBOUND'
+  COMMENT = 'Integration to receive notifications from S3 via SQS';
+
+CREATE OR REPLACE STAGE public.s3load_stage
+  URL = 's3://snowflake-northwind/'
+  STORAGE_INTEGRATION = S3_role_integration
+  NOTIFICATION_INTEGRATION = s3_notify_int
+  FILE_FORMAT = public.csv_ff;
+
+CREATE OR REPLACE PIPE northwind.raw.suppliers_pipe
+AUTO_INGEST = TRUE AS
+  COPY INTO northwind.raw.suppliers
+  FROM @public.s3load_stage/raw/suppliers
+  FILE_FORMAT = (FORMAT_NAME = 'public.csv_ff');
+-----------------------------------------------------*/
+
+/*-----------------------------------------------------
+WORKAROUND - STORED PROCEDURE and TASK
+-----------------------------------------------------*/
+
+USE SCHEMA automation;
+
+CREATE OR REPLACE PROCEDURE load_suppliers_sp()
+  RETURNS STRING
+  LANGUAGE SQL
+AS
+$$
+BEGIN
+  COPY INTO northwind.raw.suppliers
+  FROM @public.s3load_stage/raw/suppliers
+  FILE_FORMAT = (FORMAT_NAME = 'public.csv_ff')
+  ON_ERROR = 'CONTINUE';
+
+  RETURN 'Load completed';
+END;
+$$;
+
+CREATE OR REPLACE TASK load_suppliers_task
+  WAREHOUSE = COMPUTE_WH
+  SCHEDULE = 'USING CRON * * * * * UTC'  -- every 1 minute
+AS
+  CALL load_suppliers_sp();
+ 
+-- Start the task
+ALTER TASK load_suppliers_task RESUME;
+
+-- Run the following query after 1 minute
+SELECT * FROM suppliers;
+
+-- Remember to suspend this task when not in use to avoid unnecessary credit consumption.
+ALTER TASK load_suppliers_task SUSPEND;
+
+--Automate the data ingestion for territories
