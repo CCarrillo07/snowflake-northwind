@@ -250,6 +250,8 @@ CREATE OR REPLACE TASK load_suppliers_task
   SCHEDULE = 'USING CRON * * * * * UTC'  -- every 1 minute
 AS
   CALL load_suppliers_sp();
+
+SHOW TASKS;
  
 -- Start the task
 ALTER TASK load_suppliers_task RESUME;
