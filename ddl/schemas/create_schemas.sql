@@ -2,9 +2,6 @@
 -- Schema Setup
 -----------------------------------------------------*/
 
--- Switch to the new database
-USE DATABASE northwind;
-
 -- Create schemas
 CREATE OR REPLACE SCHEMA raw;
 CREATE OR REPLACE SCHEMA harmonized;
