@@ -1,0 +1,20 @@
+CREATE OR REPLACE TABLE employees (
+    employee_id INT,
+    last_name VARCHAR,
+    first_name VARCHAR,
+    title VARCHAR,
+    title_of_courtesy VARCHAR,
+    birth_date DATE,
+    hire_date DATE,
+    address VARCHAR,
+    city VARCHAR,
+    region VARCHAR,
+    postal_code VARCHAR,
+    country VARCHAR,
+    home_phone VARCHAR,
+    extension VARCHAR,
+    photo VARCHAR,
+    notes VARCHAR,
+    reports_to INT,
+    photo_path VARCHAR
+);
