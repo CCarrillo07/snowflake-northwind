@@ -1,0 +1,112 @@
+USE ROLE accountadmin;
+USE DATABASE northwind;
+
+-- =========================
+-- Step 1: Create Harmonized Tables
+-- =========================
+
+USE SCHEMA harmonized;
+
+-- =========================
+-- Step 2: Stored Procedures for Data Transformation
+-- =========================
+
+USE SCHEMA automation;
+
+CREATE OR REPLACE PROCEDURE sp_transform_orders()
+LANGUAGE SQL
+AS
+$$
+BEGIN
+  INSERT OVERWRITE INTO northwind.harmonized.orders
+  SELECT
+    o.order_id,
+    TRY_TO_DATE(o.order_date, 'YYYY-MM-DD'),
+    TRY_TO_DATE(o.shipped_date, 'YYYY-MM-DD'),
+    DATEDIFF('day', TRY_TO_DATE(o.order_date, 'YYYY-MM-DD'), TRY_TO_DATE(o.shipped_date, 'YYYY-MM-DD')),
+    c.customer_id,
+    c.company_name,
+    e.employee_id,
+    CONCAT(e.first_name, ' ', e.last_name),
+    s.shipper_id,
+    s.company_name,
+    o.freight
+  FROM northwind.raw.orders o
+  LEFT JOIN northwind.raw.customers c ON o.customer_id = c.customer_id
+  LEFT JOIN northwind.raw.employees e ON o.employee_id = e.employee_id
+  LEFT JOIN northwind.raw.shippers s ON o.ship_via = s.shipper_id
+  WHERE o.order_id IS NOT NULL;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE sp_transform_order_details()
+LANGUAGE SQL
+AS
+$$
+BEGIN
+  INSERT OVERWRITE INTO northwind.harmonized.order_details
+  SELECT
+    od.order_detail_id,
+    od.order_id,
+    od.product_id,
+    p.product_name,
+    od.unit_price,
+    od.quantity,
+    od.discount,
+    ROUND(od.unit_price * od.quantity * (1 - od.discount), 2)
+  FROM northwind.raw.order_details od
+  LEFT JOIN northwind.raw.products p ON od.product_id = p.product_id
+  WHERE od.order_detail_id IS NOT NULL;
+END;
+$$;
+
+-- =========================
+-- Step 3: Master Procedure to Call All Transformations
+-- =========================
+
+CREATE OR REPLACE PROCEDURE northwind.harmonized.sp_transform_all()
+LANGUAGE SQL
+AS
+$$
+BEGIN
+  CALL northwind.harmonized.sp_transform_orders();
+  CALL northwind.harmonized.sp_transform_order_details();
+END;
+$$;
+
+-- =========================
+-- Step 4: Summary Views (Weekly and Monthly)
+-- =========================
+
+USE SCHEMA harmonized;
+
+-- =========================
+-- Step 5: Task to Orchestrate the Transformations
+-- =========================
+
+USE SCHEMA automation;
+
+/*===============================================================
+  Before proceeding, create a single task named `task_load_orders_info` 
+  that runs a master stored procedure (`sp_load_orders_info`) responsible 
+  for calling both `sp_load_orders` and `sp_load_order_details`.
+
+  This new task consolidates the ingestion of both `orders` and 
+  `order_details` data into a single orchestration point.
+
+  Any existing individual ingestion tasks for `orders` and 
+  `order_details` must be deleted, as `task_load_orders` 
+  will replace them in the ingestion phase.
+================================================================*/
+
+CREATE OR REPLACE TASK northwind.task_transform_all
+  WAREHOUSE = COMPUTE_WH
+  AFTER task_load_orders
+AS
+  CALL sp_transform_all();
+
+-- Activate the task
+ALTER task_transform_all RESUME;
+
+-- Remember to suspend this task when not in use to avoid unnecessary credit consumption.
+ALTER task_transform_all SUSPEND;
