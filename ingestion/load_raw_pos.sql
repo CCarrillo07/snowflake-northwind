@@ -70,7 +70,7 @@ FROM @public.s3load_stage/raw/categories;
 
 SELECT * FROM northwind.raw.categories;
 
--- Use COPY INTO to load data into customers, employee_territories, employees, order_details, orders, products, regions, and shippers.
+-- Use COPY INTO to load data into customers, employee_territories, employees, products, regions, shippers, suppliers, and territories
 
 /*-----------------------------------------------------
 -- Step 5: PIPE demonstration 
@@ -107,36 +107,33 @@ WORKAROUND - STORED PROCEDURE and TASK
 
 USE SCHEMA automation;
 
-CREATE OR REPLACE PROCEDURE load_suppliers_sp()
-  RETURNS STRING
+CREATE OR REPLACE PROCEDURE sp_load_orders()
   LANGUAGE SQL
 AS
 $$
 BEGIN
-  COPY INTO northwind.raw.suppliers
-  FROM @public.s3load_stage/raw/suppliers
+  COPY INTO northwind.raw.orders
+  FROM @public.s3load_stage/raw/orders
   FILE_FORMAT = (FORMAT_NAME = 'public.csv_ff')
   ON_ERROR = 'CONTINUE';
-
-  RETURN 'Load completed';
 END;
 $$;
 
-CREATE OR REPLACE TASK load_suppliers_task
+CREATE OR REPLACE TASK task_load_orders
   WAREHOUSE = COMPUTE_WH
   SCHEDULE = 'USING CRON * * * * * UTC'  -- every 1 minute
 AS
-  CALL load_suppliers_sp();
+  CALL sp_load_orders();
 
 SHOW TASKS;
  
 -- Start the task
-ALTER TASK load_suppliers_task RESUME;
+ALTER TASK task_load_orders RESUME;
 
 -- Run the following query after 1 minute
-SELECT * FROM suppliers;
+SELECT * FROM northwind.raw.orders;
 
 -- Remember to suspend this task when not in use to avoid unnecessary credit consumption.
-ALTER TASK load_suppliers_task SUSPEND;
+ALTER TASK task_load_orders SUSPEND;
 
---Automate the data ingestion for territories
+--Automate the data ingestion for order_details
