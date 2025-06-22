@@ -15,6 +15,8 @@ USE DATABASE northwind;
 -- Step 2: AWS Integration and Stage Creation
 -----------------------------------------------------*/
 
+USE SCHEMA public;
+
 -- Create storage integration
 CREATE OR REPLACE STORAGE INTEGRATION S3_role_integration
   TYPE = EXTERNAL_STAGE
@@ -108,14 +110,17 @@ WORKAROUND - STORED PROCEDURE and TASK
 USE SCHEMA automation;
 
 CREATE OR REPLACE PROCEDURE sp_load_orders()
+  RETURNS STRING
   LANGUAGE SQL
 AS
 $$
 BEGIN
   COPY INTO northwind.raw.orders
-  FROM @public.s3load_stage/raw/orders
+  FROM @public.s3load_stage/raw/orders/
   FILE_FORMAT = (FORMAT_NAME = 'public.csv_ff')
   ON_ERROR = 'CONTINUE';
+
+  RETURN 'Orders load completed.';
 END;
 $$;
 
