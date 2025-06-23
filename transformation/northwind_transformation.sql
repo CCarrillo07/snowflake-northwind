@@ -113,7 +113,7 @@ AS
   CALL sp_transform_all();
 
 -- Activate the task
-ALTER task_transform_all RESUME;
+ALTER TASK task_transform_all RESUME;
 
 -- Remember to suspend this task when not in use to avoid unnecessary credit consumption.
 ALTER task_transform_all SUSPEND;
