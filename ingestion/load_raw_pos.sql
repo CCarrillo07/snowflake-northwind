@@ -126,7 +126,7 @@ $$;
 
 CREATE OR REPLACE TASK task_load_orders
   WAREHOUSE = COMPUTE_WH
-  SCHEDULE = 'USING CRON * * * * * UTC'  -- every 1 minute
+  SCHEDULE = 'USING CRON */2 * * * * UTC'  -- every 2 minutes
 AS
   CALL sp_load_orders();
 
