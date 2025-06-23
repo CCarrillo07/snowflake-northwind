@@ -107,7 +107,7 @@ USE SCHEMA automation;
 
 CREATE OR REPLACE TASK northwind.task_transform_all
   WAREHOUSE = COMPUTE_WH
-  AFTER task_load_orders
+  AFTER task_load_orders_info
 AS
   CALL sp_transform_all();
 
