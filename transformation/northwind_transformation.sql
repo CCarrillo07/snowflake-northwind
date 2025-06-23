@@ -22,9 +22,9 @@ BEGIN
   INSERT OVERWRITE INTO northwind.harmonized.orders
   SELECT
     o.order_id,
-    TRY_TO_DATE(o.order_date, 'YYYY-MM-DD'),
-    TRY_TO_DATE(o.shipped_date, 'YYYY-MM-DD'),
-    DATEDIFF('day', TRY_TO_DATE(o.order_date, 'YYYY-MM-DD'), TRY_TO_DATE(o.shipped_date, 'YYYY-MM-DD')),
+    CAST(o.order_date AS DATE),
+    CAST(o.shipped_date AS DATE),
+    DATEDIFF('day', CAST(o.order_date AS DATE), CAST(o.shipped_date AS DATE)),
     c.customer_id,
     c.company_name,
     e.employee_id,
@@ -37,6 +37,7 @@ BEGIN
   LEFT JOIN northwind.raw.employees e ON o.employee_id = e.employee_id
   LEFT JOIN northwind.raw.shippers s ON o.ship_via = s.shipper_id
   WHERE o.order_id IS NOT NULL;
+  
   RETURN 'Transform completed successfully.';
 END;
 $$;
@@ -49,17 +50,17 @@ $$
 BEGIN
   INSERT OVERWRITE INTO northwind.harmonized.order_details
   SELECT
-    od.order_detail_id,
     od.order_id,
     od.product_id,
     p.product_name,
     od.unit_price,
     od.quantity,
     od.discount,
-    ROUND(od.unit_price * od.quantity * (1 - od.discount), 2)
+    ROUND(od.unit_price * od.quantity * (1 - od.discount), 2) AS total
   FROM northwind.raw.order_details od
   LEFT JOIN northwind.raw.products p ON od.product_id = p.product_id
-  WHERE od.order_detail_id IS NOT NULL;
+  WHERE od.order_id IS NOT NULL AND od.product_id IS NOT NULL;
+
   RETURN 'Transform completed successfully.';
 END;
 $$;
