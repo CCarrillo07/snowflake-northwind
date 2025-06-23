@@ -1,0 +1,12 @@
+orderID,customerID,employeeID,orderDate,requiredDate,shippedDate,shipVia,freight,shipName,shipAddress,shipCity,shipRegion,shipPostalCode,shipCountry
+11050,FOLKO,8,1998-04-27 00:00:00.000,1998-05-25 00:00:00.000,1998-05-05 00:00:00.000,2,59.41,Folk och fä HB,Åkergatan 24,Bräcke,,S-844 67,Sweden
+11051,LAMAI,7,1998-04-27 00:00:00.000,1998-05-25 00:00:00.000,,3,2.79,La maison d'Asie,1 rue Alsace-Lorraine,Toulouse,,31000,France
+11052,HANAR,3,1998-04-27 00:00:00.000,1998-05-25 00:00:00.000,1998-05-01 00:00:00.000,1,67.26,Hanari Carnes,Rua do Paço 67,Rio de Janeiro,RJ,05454-876,Brazil
+11053,PICCO,2,1998-04-27 00:00:00.000,1998-05-25 00:00:00.000,1998-04-29 00:00:00.000,2,53.05,Piccolo und mehr,Geislweg 14,Salzburg,,5020,Austria
+11054,CACTU,8,1998-04-28 00:00:00.000,1998-05-26 00:00:00.000,,1,0.33,Cactus Comidas para llevar,Cerrito 333,Buenos Aires,,1010,Argentina
+11055,HILAA,7,1998-04-28 00:00:00.000,1998-05-26 00:00:00.000,1998-05-05 00:00:00.000,2,120.92,HILARION-Abastos,Carrera 22 con Ave. Carlos Soublette #8-35,San Cristóbal,Táchira,5022,Venezuela
+11056,EASTC,8,1998-04-28 00:00:00.000,1998-05-12 00:00:00.000,1998-05-01 00:00:00.000,2,278.96,Eastern Connection,35 King George,London,,WX3 6FW,UK
+11057,NORTS,3,1998-04-29 00:00:00.000,1998-05-27 00:00:00.000,1998-05-01 00:00:00.000,3,4.13,North/South,South House 300 Queensbridge,London,,SW7 1RZ,UK
+11058,BLAUS,9,1998-04-29 00:00:00.000,1998-05-27 00:00:00.000,,3,31.14,Blauer See Delikatessen,Forsterstr. 57,Mannheim,,68306,Germany
+11059,RICAR,2,1998-04-29 00:00:00.000,1998-06-10 00:00:00.000,,2,85.8,Ricardo Adocicados,Av. Copacabana 267,Rio de Janeiro,RJ,02389-890,Brazil
+11060,FRANS,2,1998-04-30 00:00:00.000,1998-05-28 00:00:00.000,1998-05-04 00:00:00.000,2,10.98,Franchi S.p.A.,Via Monte Bianco 34,Torino,,10100,Italy
