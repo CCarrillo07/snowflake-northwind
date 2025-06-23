@@ -68,7 +68,7 @@ $$;
 -- Step 3: Master Procedure to Call All Transformations
 -- =========================
 
-CREATE OR REPLACE PROCEDURE northwind.harmonized.sp_transform_all()
+CREATE OR REPLACE PROCEDURE sp_transform_all()
 RETURNS STRING
 LANGUAGE SQL
 AS
@@ -105,7 +105,7 @@ USE SCHEMA automation;
   will replace them in the ingestion phase.
 ================================================================*/
 
-CREATE OR REPLACE TASK northwind.task_transform_all
+CREATE OR REPLACE TASK task_transform_all
   WAREHOUSE = COMPUTE_WH
   AFTER task_load_orders_info
 AS
