@@ -1,5 +1,4 @@
 CREATE OR REPLACE TABLE northwind.harmonized.order_details (
-    order_detail_id INT,
     order_id INT,
     product_id INT,
     product_name VARCHAR,
