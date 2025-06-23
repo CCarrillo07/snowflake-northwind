@@ -14,6 +14,7 @@ USE SCHEMA harmonized;
 USE SCHEMA automation;
 
 CREATE OR REPLACE PROCEDURE sp_transform_orders()
+RETURNS STRING
 LANGUAGE SQL
 AS
 $$
@@ -36,10 +37,12 @@ BEGIN
   LEFT JOIN northwind.raw.employees e ON o.employee_id = e.employee_id
   LEFT JOIN northwind.raw.shippers s ON o.ship_via = s.shipper_id
   WHERE o.order_id IS NOT NULL;
+  RETURN 'Transform completed successfully.';
 END;
 $$;
 
 CREATE OR REPLACE PROCEDURE sp_transform_order_details()
+RETURNS STRING
 LANGUAGE SQL
 AS
 $$
@@ -57,6 +60,7 @@ BEGIN
   FROM northwind.raw.order_details od
   LEFT JOIN northwind.raw.products p ON od.product_id = p.product_id
   WHERE od.order_detail_id IS NOT NULL;
+  RETURN 'Transform completed successfully.';
 END;
 $$;
 
@@ -65,12 +69,14 @@ $$;
 -- =========================
 
 CREATE OR REPLACE PROCEDURE northwind.harmonized.sp_transform_all()
+RETURNS STRING
 LANGUAGE SQL
 AS
 $$
 BEGIN
   CALL northwind.harmonized.sp_transform_orders();
   CALL northwind.harmonized.sp_transform_order_details();
+  RETURN 'Transform completed successfully.';
 END;
 $$;
 
