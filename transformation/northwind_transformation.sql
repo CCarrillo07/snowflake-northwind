@@ -74,8 +74,8 @@ LANGUAGE SQL
 AS
 $$
 BEGIN
-  CALL northwind.harmonized.sp_transform_orders();
-  CALL northwind.harmonized.sp_transform_order_details();
+  CALL sp_transform_orders();
+  CALL sp_transform_order_details();
   RETURN 'Transform completed successfully.';
 END;
 $$;
