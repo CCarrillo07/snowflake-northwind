@@ -135,7 +135,7 @@ SHOW TASKS;
 -- Start the task
 ALTER TASK task_load_orders RESUME;
 
--- Run the following query after 1 minute
+-- Run the following query after 2 minutes
 SELECT * FROM northwind.raw.orders;
 
 -- Remember to suspend this task when not in use to avoid unnecessary credit consumption.
