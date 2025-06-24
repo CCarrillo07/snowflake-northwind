@@ -13,5 +13,5 @@ SELECT
     ol.quantity,
     ol.discount,
     ol.line_total
-FROM transformation.orders o
-JOIN transformation.order_line_details ol ON o.order_id = ol.order_id;
+FROM harmonized.orders o
+JOIN harmonized.order_line_details ol ON o.order_id = ol.order_id;
