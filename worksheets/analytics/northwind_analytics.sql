@@ -40,8 +40,8 @@ BEGIN
     ol.quantity,
     ol.discount,
     ol.line_total
-  FROM transformation.orders o
-  JOIN transformation.order_line_details ol ON o.order_id = ol.order_id;
+  FROM harmonized.orders o
+  JOIN harmonized.order_line_details ol ON o.order_id = ol.order_id;
 
   RETURN 'Fact table refreshed.';
 END;
@@ -55,7 +55,7 @@ $$
 BEGIN
   INSERT OVERWRITE INTO analytics.dim_products
   SELECT DISTINCT product_id, product_name, category_id, category_name
-  FROM transformation.order_line_details;
+  FROM harmonized.order_line_details;
 
   RETURN 'dim_products refreshed.';
 END;
@@ -69,7 +69,7 @@ $$
 BEGIN
   INSERT OVERWRITE INTO analytics.dim_categories
   SELECT DISTINCT category_id, category_name
-  FROM transformation.order_line_details;
+  FROM harmonized.order_line_details;
 
   RETURN 'dim_categories refreshed.';
 END;
@@ -83,7 +83,7 @@ $$
 BEGIN
   INSERT OVERWRITE INTO analytics.dim_customers
   SELECT DISTINCT customer_id, customer_name
-  FROM transformation.orders;
+  FROM harmonized.orders;
 
   RETURN 'dim_customers refreshed.';
 END;
@@ -97,7 +97,7 @@ $$
 BEGIN
   INSERT OVERWRITE INTO analytics.dim_employees
   SELECT DISTINCT employee_id, employee_name
-  FROM transformation.orders;
+  FROM harmonized.orders;
 
   RETURN 'dim_employees refreshed.';
 END;
@@ -111,7 +111,7 @@ $$
 BEGIN
   INSERT OVERWRITE INTO analytics.dim_shippers
   SELECT DISTINCT shipper_id, shipper_name
-  FROM transformation.orders;
+  FROM harmonized.orders;
 
   RETURN 'dim_shippers refreshed.';
 END;
