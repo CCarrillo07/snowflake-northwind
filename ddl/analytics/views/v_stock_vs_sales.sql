@@ -10,7 +10,7 @@ SELECT
         WHEN p.units_in_stock < 10 THEN 'Low stock'
         ELSE 'Sufficient stock'
     END AS stock_status
-FROM transformation.products p
+FROM harmonized.products p
 LEFT JOIN (
     SELECT product_id, SUM(quantity) AS total_units_sold
     FROM analytics.fact_order_lines
