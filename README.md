@@ -1,1 +1,1 @@
-This repository contains a complete end-to-end data pipeline project based on the Northwind dataset. It includes data ingestion, transformation, and analytics layers implemented for Snowflake, along with IAM policies and a Streamlit dashboard app for KPI visualization.
+
