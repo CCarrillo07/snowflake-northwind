@@ -1,27 +1,25 @@
-This repository contains a complete end-to-end data pipeline project based on the Northwind dataset. It includes data ingestion, transformation, and analytics layers implemented for Snowflake, along with IAM policies and a Streamlit dashboard app for KPI visualization.
+# 📊 Northwind Data Pipeline Project
 
-Repository Structure:
+This repository contains a complete end-to-end data pipeline project using the classic **Northwind dataset**. It demonstrates how to structure and manage raw data ingestion, transformation, and analytics within **Snowflake**, and includes a **Streamlit app** for KPI visualization.
 
-data/ – Raw CSV files representing the Northwind dataset, including customers, orders, products, and more.
+---
 
-ddl/ – SQL scripts organized by layer:
+## 📁 Repository Structure
 
-raw/ – Table definitions reflecting source data structure.
-
-harmonized/ – Cleaned and standardized staging tables.
-
-analytics/ – Dimensional tables, fact tables, and business-focused views for reporting.
-
-database/ and schemas/ – Scripts to create the database and schema structure.
-
-iam/ – Snowflake IAM policy file for secure S3 data access.
-
-worksheets/ – SQL scripts and app code for:
-
-ingestion/ – Loading raw data into Snowflake.
-
-transformation/ – Building harmonized and analytics layers.
-
-analytics/ – Business insights and queries.
-
-delivery/ – Streamlit app (northwind_kpis_app.py) for visualizing KPIs.
++-- data/ # Raw CSV files (customers, orders, products, etc.)
++-- ddl/ # DDL scripts organized by layer
+| +-- raw/ # Raw source table definitions
+| +-- harmonized/ # Cleaned/staged tables
+| +-- analytics/ # Star schema: dimensions, facts, views
+| | +-- tables/
+| | | +-- dim/
+| | | +-- fact/
+| | +-- views/
+| +-- database/ # Database creation script
+| +-- schemas/ # Schema creation script
++-- iam/ # Snowflake IAM policy for S3 access
++-- worksheets/ # SQL and app scripts by phase
+| +-- ingestion/ # Ingest raw CSVs into Snowflake
+| +-- transformation/ # Build harmonized & analytics layers
+| +-- analytics/ # Query logic for insights
+| +-- delivery/ # Streamlit KPI dashboard
