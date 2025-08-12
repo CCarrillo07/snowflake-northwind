@@ -1,4 +1,4 @@
-USE ROLE accountadmin;
+USE ROLE USERNAME_ROLE;
 USE DATABASE northwind;
 
 -- =========================
@@ -134,7 +134,7 @@ $$;
 USE SCHEMA automation;
 
 CREATE OR REPLACE TASK task_transform_all
-  WAREHOUSE = COMPUTE_WH
+  WAREHOUSE = USERNAME_WH
   AFTER task_load_orders_info
 AS
   CALL sp_transform_all();
