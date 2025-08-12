@@ -3,4 +3,4 @@
 -----------------------------------------------------*/
 
 -- Create database
-CREATE OR REPLACE DATABASE northwind;
+CREATE OR REPLACE DATABASE USERNAME_NORTHWIND;
