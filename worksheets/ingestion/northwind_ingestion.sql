@@ -46,7 +46,7 @@ CREATE OR REPLACE FILE FORMAT public.csv_ff
 -- Create stage using the integration and file format
 CREATE OR REPLACE STAGE public.s3load_stage
   URL = 's3://snowflake-northwind/'
-  STORAGE_INTEGRATION = S3_role_integration
+  STORAGE_INTEGRATION = USERNAME_S3_role_integration
   FILE_FORMAT = public.csv_ff;
 
 -- View the stage
