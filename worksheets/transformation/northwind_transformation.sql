@@ -1,5 +1,5 @@
 USE ROLE USERNAME_ROLE;
-USE DATABASE northwind;
+USE DATABASE USERNAME_NORTHWIND;
 
 -- =========================
 -- Step 1: Create Harmonized Tables
@@ -19,7 +19,7 @@ LANGUAGE SQL
 AS
 $$
 BEGIN
-  INSERT OVERWRITE INTO northwind.harmonized.orders
+  INSERT OVERWRITE INTO username_northwind.harmonized.orders
   SELECT
     o.order_id,
     CAST(o.order_date AS DATE),
@@ -32,10 +32,10 @@ BEGIN
     s.shipper_id,
     s.company_name,
     o.freight
-  FROM northwind.raw.orders o
-  LEFT JOIN northwind.raw.customers c ON o.customer_id = c.customer_id
-  LEFT JOIN northwind.raw.employees e ON o.employee_id = e.employee_id
-  LEFT JOIN northwind.raw.shippers s ON o.ship_via = s.shipper_id
+  FROM username_northwind.raw.orders o
+  LEFT JOIN username_northwind.raw.customers c ON o.customer_id = c.customer_id
+  LEFT JOIN username_northwind.raw.employees e ON o.employee_id = e.employee_id
+  LEFT JOIN username_northwind.raw.shippers s ON o.ship_via = s.shipper_id
   WHERE o.order_id IS NOT NULL;
 
   RETURN 'Transform completed successfully.';
@@ -48,7 +48,7 @@ LANGUAGE SQL
 AS
 $$
 BEGIN
-  INSERT OVERWRITE INTO northwind.harmonized.order_line_details
+  INSERT OVERWRITE INTO username_northwind.harmonized.order_line_details
   SELECT
     od.order_id,
     od.product_id,
@@ -59,9 +59,9 @@ BEGIN
     od.quantity,
     od.discount,
     ROUND(od.unit_price * od.quantity * (1 - od.discount), 2)
-  FROM northwind.raw.order_details od
-  LEFT JOIN northwind.raw.products p ON od.product_id = p.product_id
-  LEFT JOIN northwind.raw.categories c ON p.category_id = c.category_id
+  FROM username_northwind.raw.order_details od
+  LEFT JOIN username_northwind.raw.products p ON od.product_id = p.product_id
+  LEFT JOIN username_northwind.raw.categories c ON p.category_id = c.category_id
   WHERE od.order_id IS NOT NULL AND od.product_id IS NOT NULL;
 
   RETURN 'Transform completed successfully.';
@@ -74,7 +74,7 @@ LANGUAGE SQL
 AS
 $$
 BEGIN
-  INSERT OVERWRITE INTO northwind.harmonized.products
+  INSERT OVERWRITE INTO username_northwind.harmonized.products
   SELECT
     p.product_id,
     p.product_name,
@@ -89,9 +89,9 @@ BEGIN
     p.reorder_level,
     p.discontinued,
     CASE WHEN p.discontinued THEN 'Discontinued' ELSE 'Active' END
-  FROM northwind.raw.products p
-  LEFT JOIN northwind.raw.categories c ON p.category_id = c.category_id
-  LEFT JOIN northwind.raw.suppliers s ON p.supplier_id = s.supplier_id;
+  FROM username_northwind.raw.products p
+  LEFT JOIN username_northwind.raw.categories c ON p.category_id = c.category_id
+  LEFT JOIN username_northwind.raw.suppliers s ON p.supplier_id = s.supplier_id;
 
   RETURN 'Transform completed successfully.';
 END;
@@ -146,9 +146,9 @@ SHOW TASKS;
 
 ALTER TASK task_load_orders_info RESUME;
 
-SELECT * FROM northwind.harmonized.orders;
-SELECT * FROM northwind.harmonized.order_line_details;
-SELECT * FROM northwind.harmonized.products;
+SELECT * FROM username_northwind.harmonized.orders;
+SELECT * FROM username_northwind.harmonized.order_line_details;
+SELECT * FROM username_northwind.harmonized.products;
 
 -- Remember to suspend this task when not in use to avoid unnecessary credit consumption.
 ALTER TASK task_transform_all SUSPEND;
