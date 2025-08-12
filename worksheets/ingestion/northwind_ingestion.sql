@@ -27,7 +27,7 @@ CREATE OR REPLACE STORAGE INTEGRATION S3_role_integration
   STORAGE_PROVIDER = S3
   ENABLED = TRUE
   STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::457151801201:role/snowflake_role'
-  STORAGE_ALLOWED_LOCATIONS = ('s3://snowflake-northwind/');
+  STORAGE_ALLOWED_LOCATIONS = ('s3://snowflake-/');
 
 -- View the integration
 SHOW INTEGRATIONS;
@@ -71,10 +71,10 @@ USE SCHEMA raw;
 -----------------------------------------------------*/
 
 -- Categories table loading
-COPY INTO northwind.raw.categories
+COPY INTO username_northwind.raw.categories
 FROM @public.s3load_stage/raw/categories;
 
-SELECT * FROM northwind.raw.categories;
+SELECT * FROM username_northwind.raw.categories;
 
 -- Use COPY INTO to load data into customers, employee_territories, employees, products, regions, shippers, suppliers, and territories
 
@@ -119,7 +119,7 @@ CREATE OR REPLACE PROCEDURE sp_load_orders()
 AS
 $$
 BEGIN
-  COPY INTO northwind.raw.orders
+  COPY INTO username_northwind.raw.orders
   FROM @public.s3load_stage/raw/orders/
   FILE_FORMAT = (FORMAT_NAME = 'public.csv_ff')
   ON_ERROR = 'CONTINUE';
@@ -140,7 +140,7 @@ SHOW TASKS;
 ALTER TASK task_load_orders RESUME;
 
 -- Run the following query after 2 minutes
-SELECT * FROM northwind.raw.orders;
+SELECT * FROM username_northwind.raw.orders;
 
 -- Remember to suspend this task when not in use to avoid unnecessary credit consumption.
 ALTER TASK task_load_orders SUSPEND;
