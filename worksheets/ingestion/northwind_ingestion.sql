@@ -1,4 +1,8 @@
-USE ROLE accountadmin;
+CREATE WAREHOUSE USERNAME_WH;
+
+USE WAREHOUSE RHINO_WH;
+
+USE ROLE USERNAME_ROLE;
 
 /*-----------------------------------------------------
 -- Step 1: Database and Schema Setup
