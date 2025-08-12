@@ -1,5 +1,5 @@
-USE ROLE accountadmin;
-USE DATABASE northwind;
+USE ROLE USERNAME_ROLE;
+USE DATABASE USERNAME_NORTHWIND;
 USE SCHEMA analytics;
 
 -- =====================================
@@ -141,7 +141,7 @@ $$;
 -- 6. TASK TO REFRESH ANALYTICS AFTER TRANSFORMATION
 -- =====================================
 CREATE OR REPLACE TASK task_build_analytics
-  WAREHOUSE = COMPUTE_WH
+  WAREHOUSE = USERNAME_WH
   AFTER task_transform_all
 AS
   CALL sp_build_analytics_all();
