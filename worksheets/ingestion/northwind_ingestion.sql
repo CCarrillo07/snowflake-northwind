@@ -27,7 +27,7 @@ CREATE OR REPLACE STORAGE INTEGRATION S3_role_integration
   STORAGE_PROVIDER = S3
   ENABLED = TRUE
   STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::457151801201:role/snowflake_role'
-  STORAGE_ALLOWED_LOCATIONS = ('s3://snowflake-/');
+  STORAGE_ALLOWED_LOCATIONS = ('s3://snowflake-northwind/');
 
 -- View the integration
 SHOW INTEGRATIONS;
