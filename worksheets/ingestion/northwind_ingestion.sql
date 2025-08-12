@@ -11,7 +11,7 @@ USE ROLE USERNAME_ROLE;
 -- Create database
 
 -- Switch to the new database
-USE DATABASE northwind;
+USE DATABASE USERNAME_NORTHWIND;
 
 -- Create schemas
 
