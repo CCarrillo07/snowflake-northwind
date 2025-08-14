@@ -102,39 +102,3 @@ chart_units_sold = alt.Chart(units_sold_df).mark_bar(color='#0072CE').encode(
 )
 
 st.altair_chart(chart_units_sold, use_container_width=True)
-
-# -----------------------------
-# Stock vs Sales Status with category filter
-stock_vs_sales_df = load_view("analytics.v_stock_vs_sales")
-stock_vs_sales_df['product_name'] = stock_vs_sales_df['product_name'].astype(str)
-stock_vs_sales_df['stock_status'] = stock_vs_sales_df['stock_status'].astype(str)
-stock_vs_sales_df['units_in_stock'] = pd.to_numeric(stock_vs_sales_df['units_in_stock'], errors='coerce')
-stock_vs_sales_df['total_units_sold'] = pd.to_numeric(stock_vs_sales_df['total_units_sold'], errors='coerce')
-stock_vs_sales_df['category_name'] = stock_vs_sales_df['category_name'].astype(str)
-
-st.header("Stock vs Sales Status")
-
-selected_category = st.selectbox(
-    "Select category to filter Stock vs Sales",
-    options=["All"] + sorted(stock_vs_sales_df['category_name'].unique().tolist())
-)
-
-if selected_category != "All":
-    filtered_stock_df = stock_vs_sales_df[stock_vs_sales_df['category_name'] == selected_category]
-else:
-    filtered_stock_df = stock_vs_sales_df
-
-chart_stock_vs_sales = alt.Chart(filtered_stock_df).mark_bar().encode(
-    y=alt.Y('product_name:N', sort='-x', title='Product'),
-    x=alt.X('total_units_sold:Q', title='Total Units Sold'),
-    color=alt.Color('stock_status:N', scale=alt.Scale(
-        domain=['Out of stock', 'Low stock', 'Sufficient stock'],
-        range=['#D72631', '#F4A300', '#007F5F']
-    ), legend=alt.Legend(title="Stock Status")),
-    tooltip=['product_name', 'units_in_stock', 'total_units_sold', 'stock_status']
-).properties(
-    width=700,
-    height=600
-)
-
-st.altair_chart(chart_stock_vs_sales, use_container_width=True)
