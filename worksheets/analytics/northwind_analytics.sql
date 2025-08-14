@@ -157,4 +157,3 @@ ALTER TASK task_build_analytics RESUME;
 -- SELECT * FROM analytics.v_revenue_per_category;
 -- SELECT * FROM analytics.v_units_sold_per_category;
 -- SELECT * FROM analytics.v_low_selling_products;
--- SELECT * FROM analytics.v_stock_vs_sales;
